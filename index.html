@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile_Archive_2026</title>
+    <script src="https://pygame-web.github.io"></script>
+    <style>
+        body { background: #000; color: #00ffcc; font-family: sans-serif; text-align: center; margin: 0; overflow: hidden; }
+        .nav { display: flex; justify-content: space-around; padding: 10px; background: #111; }
+        .btn { background: #222; color: #00ffcc; border: 1px solid #00ffcc; padding: 15px 5px; flex: 1; margin: 2px; font-size: 10px; font-weight: bold; border-radius: 5px; }
+        #game-container { width: 100vw; height: 80vh; background: #000; position: relative; }
+        canvas { width: 100% !important; height: 100% !important; touch-action: none; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <button class="btn" onclick="run('flappy')">KINETIC_A</button>
+        <button class="btn" onclick="run('chess')">STRATEGY_B</button>
+        <button class="btn" onclick="run('wordle')">LINGUISTIC</button>
+    </div>
+    <div id="game-container">
+        <canvas id="canvas" tabindex="-1"></canvas>
+    </div>
+
+    <!-- TOUCH-ENABLED FLAPPY BIRD -->
+    <script type="text/python" id="flappy">
+import pygame, random, asyncio
+pygame.init()
+WIDTH, HEIGHT = 400, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+async def main():
+    bird_y, bird_vel, pipes, timer = 300, 0, [], 0
+    while True:
+        screen.fill((113, 197, 207))
+        for e in pygame.event.get():
+            # MOUSEBUTTONDOWN works for Screen Taps on Mobile
+            if e.type == pygame.MOUSEBUTTONDOWN or (e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE):
+                bird_vel = -6.5
+        bird_vel += 0.25
+        bird_y += bird_vel
+        timer += 1
+        if timer % 90 == 0: pipes.append([WIDTH, random.randint(100, 350)])
+        for p in pipes[:]:
+            p[0] -= 3
+            pygame.draw.rect(screen, (115, 191, 46), (p[0], 0, 60, p[1]))
+            pygame.draw.rect(screen, (115, 191, 46), (p[0], p[1]+150, 60, HEIGHT))
+            if pygame.Rect(65, bird_y, 30, 30).colliderect(pygame.Rect(p[0], 0, 60, p[1])): bird_y = 300
+        pygame.draw.circle(screen, (247, 203, 30), (80, int(bird_y)), 15)
+        pygame.display.update()
+        await asyncio.sleep(0)
+asyncio.run(main())
+    </script>
+
+    <!-- TOUCH-ENABLED CHESS -->
+    <script type="text/python" id="chess">
+import pygame, asyncio
+pygame.init()
+screen = pygame.display.set_mode((640, 640))
+async def main():
+    while True:
+        for r in range(8):
+            for c in range(8):
+                color = (245, 245, 220) if (r+c)%2==0 else (112, 128, 144)
+                pygame.draw.rect(screen, color, (c*80, r*80, 80, 80))
+        pygame.display.flip()
+        await asyncio.sleep(0)
+asyncio.run(main())
+    </script>
+
+    <script>
+        function run(id) {
+            const code = document.getElementById(id).textContent;
+            window.pygbag.run(code);
+        }
+    </script>
+</body>
+</html>
